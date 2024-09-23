@@ -107,23 +107,33 @@ def user_form(request):
         username = request.POST.get('username')
         request.session['username'] = username
 
-        # gene summary
-        gene = Genesummary.objects.get(geneName=username)
+        try:
+            # try to fet gene if in database
+            # gene summary
+            gene = Genesummary.objects.get(geneName=username)
 
-        # gene expression
-        queryset = Genecounts.objects.filter(geneName=username)
-        data = list(queryset.values())
-        df = pd.DataFrame(data)
-        fig = gene_boxplot(df)
+            # gene expression
+            queryset = Genecounts.objects.filter(geneName=username)
+            data = list(queryset.values())
+            df = pd.DataFrame(data)
+            fig = gene_boxplot(df)
 
-        context = {
-            'title': 'Gene Details Page',
-            'gene': gene,
-            'plot': fig
-        }
+            context = {
+                'title': 'Gene Details Page',
+                'gene': gene,
+                'plot': fig
+            }
 
-        #context = {'gene': gene}
-        template = 'expression/genelevel.html'
+            #context = {'gene': gene}
+            template = 'expression/genelevel.html'
+
+        except Genesummary.DoesNotExist:
+            # Handle case where gene is not found
+            context = {
+                'title': 'Gene Not Found',
+                'error_message': f'{username} not found in our dataset',
+            }
+            template = 'expression/not_found.html'
 
         return render(request,
               template,

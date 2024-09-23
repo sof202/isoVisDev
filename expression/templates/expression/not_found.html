@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block content %}
+<p>{{ error_message }}</p>
+<a href="{% url 'expression:user_form' %}">Find another gene</a>
+{% endblock  %}
+
+
