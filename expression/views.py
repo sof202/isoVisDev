@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from expression import models
-from .models import Film, Genesummary, Genecounts, Transcriptcounts
+from .models import Film, Genesummary, Genecounts, Transcriptcounts, TranscriptFeature
 import plotly.express as px
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -153,12 +153,15 @@ def transcript_identify(request):
         username = request.POST.get('username')
         request.session['username'] = username
 
-        transcripts = Transcriptcounts.objects.filter(geneName=username)
+        transcripts = TranscriptFeature.objects.filter(geneName=username.strip())
+        unique_transcripts = {transcript.isoform: transcript for transcript in transcripts}.values()
+        print(unique_transcripts)
 
         if transcripts.exists():
             context = {
+                'gene': username, 
                 'title': 'Gene Details Page',
-                'transcripts': transcripts  # Pass all transcripts to the context
+                'transcripts': unique_transcripts  # Pass all transcripts to the context
             }
             template = 'expression/transcriptlevel.html'
         else:

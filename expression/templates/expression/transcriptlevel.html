@@ -5,13 +5,13 @@
     {% if error_message %}
         <p>{{ error_message }}</p>
     {% else %}
-        <h2> {{ transcripts.0.geneName }}</h2>
+        <h2> {{ gene }}</h2>
         <br>
         <!-- Dropdown for transcripts -->
         <label for="transcripts">Select Transcript:</label>
         <select id="transcripts">
             {% for transcript in transcripts %}
-                <option value="{{ transcript.id }}">{{ transcript.isoform }}</option>
+                <option value="{{ transcript.id }}">{{ transcript }}</option>
             {% endfor %}
         </select>
     {% endif %}
