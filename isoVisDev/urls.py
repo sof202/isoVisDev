@@ -22,4 +22,6 @@ from expression import views
 urlpatterns = [
     path('', views.home, name='home'),
     path('admin/', admin.site.urls),
+    path('expression/', include('expression.urls')),   # added
+    path('geneExpression/<str:gene>', views.gene_expression, name='geneExpression')
 ]
