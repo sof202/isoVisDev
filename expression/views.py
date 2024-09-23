@@ -6,6 +6,7 @@ import plotly.express as px
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import subprocess
 
 
 def home(request):
@@ -132,6 +133,38 @@ def user_form(request):
             context = {
                 'title': 'Gene Not Found',
                 'error_message': f'{username} not found in our dataset',
+            }
+            template = 'expression/not_found.html'
+
+        return render(request,
+              template,
+              context)
+
+def transcript_identify(request):
+    if request.method == 'GET':
+        context = {'title': 'User Form Page'}
+        template = 'expression/user_form.html'
+
+        return render(request,
+                      template,
+                      context)
+        
+    elif request.method == 'POST':
+        username = request.POST.get('username')
+        request.session['username'] = username
+
+        transcripts = Transcriptcounts.objects.filter(geneName=username)
+
+        if transcripts.exists():
+            context = {
+                'title': 'Gene Details Page',
+                'transcripts': transcripts  # Pass all transcripts to the context
+            }
+            template = 'expression/transcriptlevel.html'
+        else:
+            context = {
+                'title': 'Gene Not Found',
+                'error_message': f'Gene "{username}" not found in our dataset',
             }
             template = 'expression/not_found.html'
 
