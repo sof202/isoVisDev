@@ -48,5 +48,19 @@ class Transcriptcounts(models.Model):
     sex = models.CharField(max_length=2)
     
     def __str__(self):
-        return self.title
+        return self.isoform
+
+
+# Transcript gtf
+class TranscriptFeature(models.Model):
+    seqname = models.CharField(max_length=100)
+    geneName = models.CharField(max_length=100)
+    isoform = models.CharField(max_length=50)
+    start = models.IntegerField()
+    end = models.IntegerField()
+    feature = models.CharField(max_length=100)
+    strand = models.CharField(max_length=1)
+
+    def __str__(self):
+        return self.isoform
 

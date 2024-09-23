@@ -1,24 +1,38 @@
 {% extends 'base.html' %}
+{% load static %}  <!-- Load static template tag -->
+
 {% block content %}
-    
-     <div style="min-height: calc(100vh - 100px);">  <!-- Adjust height as needed -->
+<div style="min-height: calc(100vh - 100px);">  <!-- Adjust height as needed -->
     {% if error_message %}
-        <p>{{ error_message }}</p>
+        <p class="alert alert-danger">{{ error_message }}</p>
     {% else %}
-        <h2> {{ gene }}</h2>
+        <h2>{{ gene }}</h2>
         <br>
+        
         <!-- Dropdown for transcripts -->
         <label for="transcripts">Select Transcript:</label>
-        <select id="transcripts">
-            {% for transcript in transcripts %}
-                <option value="{{ transcript.id }}">{{ transcript }}</option>
-            {% endfor %}
-        </select>
+        <form id="transcript-form" method="POST">
+            {% csrf_token %}
+            <select id="transcripts" name="transcript_id" required>
+                {% for transcript in transcripts %}
+                    <option value="{{ transcript.isoform }}">{{ transcript }}</option>
+                {% endfor %}
+            </select>
+            <!-- <button type="submit" class="btn btn-primary mt-2">Show Transcript</button>-->
+        </form>
+        
+        <!-- Display the plot if available -->
+        {% if plot %}
+            <div>
+                <img src="{% static 'plots/transcript_plot.png' %}" alt="Transcript Plot">
+            </div>
+        {% endif %}
     {% endif %}
-    </div>
+</div>
 
-    <!-- Conditional footer for this specific template -->
-    <footer style="margin-top: auto; background: #f1f1f1; text-align: center; padding: 10px;">
-        <a href="{% url 'expression:user_form' %}">Find another gene</a>
-    </footer>
-{% endblock  %}
+<!-- Conditional footer for this specific template -->
+<footer style="margin-top: auto; background: #f1f1f1; text-align: center; padding: 10px;">
+    <a href="{% url 'expression:user_form' %}">Find another gene</a>
+</footer>
+
+{% endblock %}
