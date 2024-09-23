@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-t-n*(rbzl@29toox-%zh16z^$8jnslm4kddj*x0pazut#y9t!h
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['isoforms.com','www.isoforms.com','127.0.0.1','172.31.24.85','isoVisDev-env.eba-r7r9zsja.eu-north-1.elasticbeanstalk.com']
+ALLOWED_HOSTS = ['isoforms.com','www.isoforms.com','127.0.0.1','172.31.19.167','isoVis-deploy-env.eba-r7r9zsja.eu-north-1.elasticbeanstalk.com']
 
 
 # Application definition
