@@ -22,7 +22,7 @@ def main(request):
     #              context)
     if request.method == 'GET':
         context = {'title': 'User Form Page'}
-        template = 'films/user_form.html'
+        template = 'expression/user_form.html'
 
         return render(request,
                   template,
@@ -48,7 +48,7 @@ def main(request):
         }
 
         #context = {'gene': gene}
-        template = 'films/genelevel.html'
+        template = 'expression/genelevel.html'
 
         return render(request,
               template,
@@ -71,7 +71,7 @@ def user_info(request):
             
         context = {'userinfo': userinfo,
                    'title': 'User Info Page'}
-        template = 'films/user_info.html'
+        template = 'expression/user_info.html'
         return render(request,
                       template,
                       context)
@@ -97,7 +97,7 @@ def gene_boxplot(df):
 def user_form(request):
     if request.method == 'GET':
         context = {'title': 'User Form Page'}
-        template = 'films/user_form.html'
+        template = 'expression/user_form.html'
 
         return render(request,
                       template,
@@ -123,7 +123,7 @@ def user_form(request):
         }
 
         #context = {'gene': gene}
-        template = 'films/genelevel.html'
+        template = 'expression/genelevel.html'
 
         return render(request,
               template,
@@ -134,7 +134,7 @@ def film_all(request):
     context ={
         'film': film
     }
-    return render(request,'films/details.html',context)
+    return render(request,'expression/details.html',context)
 
 
 def details(request, id):
@@ -142,7 +142,7 @@ def details(request, id):
     # other query option:
     # film = Film.objects.filter(id=id)[0]
     context = {'film': film}
-    return render(request, 'films/details.html', context)
+    return render(request, 'expression/details.html', context)
 
 
 def get_data():

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container-fluid d-flex justify-content-left">
+    <form method="POST" action="" style="width: 40%;">
+
+        <!-- ADD THIS TAG IN HTML FORMS WITH POST REQUESTS-->
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="geneSelect">Select Gene</label>
+            <select name="gene" class="form-control my-2" id="geneSelect">
+                {% for gene in genes %}
+                    <option value="{{ gene.id }}">{{ gene.geneName }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary mt-2">Submit</button>
+    </form>
+</div>
+
+{% endblock  %}

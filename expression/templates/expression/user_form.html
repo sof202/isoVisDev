@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container-fluid d-flex justify-content-left">
+    <form method="POST" action="" sytle="width: 40%;">
+
+        <!-- ADD THIS TAG IN HTML FORMS WITH POST REQUESTS-->
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="exampleInputEmail1">Enter Gene Name</label>
+            <input name="username" type="text" class="form-control my-2" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="">
+        </div>
+        <button type="submit" class="btn btn-primary mt-2">Submit</button>
+    </form>
+</div>
+
+{% endblock  %}

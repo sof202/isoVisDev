@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block content %}
+<br>
+<table class="table" style="width: 30%">
+  <thead>
+    <tr>
+      <th scope="col"></th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td scope="row">Gene name</td>
+      <td class="text-dark">{{gene.geneName}}</td>
+    </tr>
+    <tr>
+      <td scope="row">Number of total transcripts</td>
+      <td>{{gene.totalNum}}</td>
+    </tr>
+    <tr>
+      <td>Number of novel transcripts</td>
+      <td>{{gene.novelNum}}</td>
+    </tr>
+  </tbody>
+</table>
+<br>
+<h4> Gene expression </h4>
+<div class="container-fluid d-flex justify-content-left">
+  {{plot | safe}}
+</div>
+{% endblock  %}
