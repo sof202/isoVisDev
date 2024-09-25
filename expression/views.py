@@ -88,6 +88,7 @@ def gene_boxplot(df):
     #fig = sns.boxplot(data = df, x = "group", y = "counts", hue = "sex") 
     #fig.set_ylabel('Normalised counts')
     #fig.set_xlabel('')
+    print(df.columns)
     fig = px.box(
       data_frame = df,
       x = 'group',
@@ -159,61 +160,6 @@ def run_r_ggtranscript(gtfPath):
         print(f"Error: {e.stderr}")  # Print R script errors
         return None  # Return None if there's an error 
 
-def to_intron(gexons, group_var):
-    introns = []
-    for isoform, group in gexons.groupby(group_var):
-        for i in range(len(group) - 1):
-            intron_start = group.iloc[i]['end']
-            intron_end = group.iloc[i + 1]['start']
-            introns.append({
-                'isoform': isoform,
-                'start': intron_start,
-                'end': intron_end,
-                'type': 'intron'
-            })
-    return pd.DataFrame(introns)
-
-def shorten_gaps(gexons, gintrons, group_var):
-    return pd.concat([gexons, gintrons], ignore_index=True)
-
-def plot_simply(gtf):
-    gexons = gtf
-    gintrons = to_intron(gexons, group_var="isoform")
-    grescaled = shorten_gaps(gexons, gintrons, group_var="isoform")
-
-    fig, ax = plt.subplots(figsize=(10, 6))
-
-    for _, row in grescaled[grescaled['type'] == 'exon'].iterrows():
-        ax.add_patch(patches.Rectangle((row['start'], row['isoform']),
-                                        row['end'] - row['start'],
-                                        0.4,
-                                        color=row['Type'],
-                                        label=row['Type'] if row['Type'] not in ax.get_legend_handles_labels()[1] else ""))
-
-    for _, row in grescaled[grescaled['type'] == 'intron'].iterrows():
-        ax.add_patch(patches.FancyArrowPatch((row['start'], row['isoform']),
-                                              (row['end'], row['isoform']),
-                                              mutation_scale=20,
-                                              color='black',
-                                              linewidth=1,
-                                              arrowstyle='-|>',
-                                              connectionstyle="arc3,rad=0.5"))
-
-    ax.set_yticks(grescaled['isoform'].unique())
-    ax.set_ylabel('Transcripts')
-    ax.set_title('Transcript Structure')
-    ax.spines['top'].set_visible(False)
-    ax.spines['right'].set_visible(False)
-    ax.spines['left'].set_color('grey')
-    ax.spines['bottom'].set_color('grey')
-    plt.xticks(size=12)
-    plt.yticks(size=12)
-    plt.legend(title='Type', loc='upper right', frameon=False)
-
-    html_fig = mpld3.fig_to_html(fig)
-    plt.close(fig)  # Close the figure to avoid display
-
-    return html_fig
 
 def transcript_identify(request):
     if request.method == 'GET':
@@ -275,11 +221,17 @@ def transcript_identify(request):
                 df.to_csv(gtfPath)
                 plot = run_r_ggtranscript(gtfPath)  # Modify this function to accept isoform ID
 
+                # boxplot
+                selected_transcript_expression_df = Transcriptcounts.objects.filter(isoform=selected_transcripts[0])
+                expression_df = pd.DataFrame(list(selected_transcript_expression_df.values()))
+                plotExpression = gene_boxplot(expression_df)
+
                 print("Selected transcripts:", selected_transcripts)
                 # Render the success message with selected transcripts
                 return render(request, 'expression/transcript_selected_success.html', {
                     'selected_transcripts': selected_transcripts,
                     'plot' : plot,
+                    'plotExpression': plotExpression,
                     'gene_name': gene_name
                 })
             else:

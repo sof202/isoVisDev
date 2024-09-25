@@ -3,23 +3,57 @@
 
 {% block content %}
     <div style="min-height: calc(100vh - 100px);">
-        <h1> {{ gene_name }} </h1>
+        <h1>{{ gene_name }}</h1>
         <br>
         <div>
             {% for transcript in selected_transcripts %}
-                <span> <h4> {{ transcript }} </h4> </span>{% if not forloop.last %}, {% endif %}
+                <span><h4>{{ transcript }}</h4></span>{% if not forloop.last %}, {% endif %}
             {% empty %}
                 <span>No transcripts selected.</span>
             {% endfor %}
         </div>
 
         <div class="container-fluid d-flex justify-content-left">
-           {% if plot %}
-            <div>
-                <img src="{% static 'plots/transcript_plot.png' %}" alt="Transcript Plot">
-            </div>
-           {% endif %}
+            <button id="toggle-plot1" onclick="togglePlot('plot1')" class="active">Structure</button>
+            <button id="toggle-plot2" onclick="togglePlot('plot2')">Expression</button>
         </div>
 
+        <div id="plot1" class="plot" style="display: block;">  <!-- Show Plot 1 by default -->
+            {% if plot %}
+                <div>
+                    <img src="{% static 'plots/transcript_plot.png' %}" alt="Transcript Plot">
+                </div>
+            {% endif %}
+        </div>
+
+        <div id="plot2" class="plot" style="display: none;">
+            <div class="container-fluid d-flex justify-content-left">
+                {{ plotExpression | safe }}
+            </div>
+        </div>
     </div>
+
+    <script>
+        function togglePlot(plotId) {
+            const plots = document.querySelectorAll('.plot');
+            plots.forEach(plot => {
+                plot.style.display = 'none';  // Hide all plots
+            });
+            document.getElementById(plotId).style.display = 'block';  // Show the selected plot
+            
+            // Update button styles
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                button.classList.remove('active');  // Remove active class from all buttons
+            });
+            document.getElementById(`toggle-${plotId}`).classList.add('active');  // Highlight active button
+        }
+    </script>
+
+    <style>
+        .active {
+            background-color: #007bff;  /* Highlight color */
+            color: white;                /* Text color for active button */
+        }
+    </style>
 {% endblock %}

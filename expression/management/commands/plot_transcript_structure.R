@@ -34,18 +34,27 @@ plot_simply <- function(gtfPath){
     ) +
     theme_classic() +
     labs(y = NULL) +
-    theme(axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank(),legend.position="none",
-          panel.background=element_blank(),panel.border=element_blank(),panel.grid.major=element_blank(),
-          panel.grid.minor=element_blank(),plot.background=element_blank())
+    theme(
+    axis.line = element_blank(),
+    axis.text.x = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks = element_blank(),
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+    legend.position = "none",
+    panel.background = element_blank(),
+    panel.border = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    plot.background = element_blank(),
+    plot.margin = margin(0, 0, 0, 0)  # Reducing margins to eliminate extra space
+    )
 
   return(p)
 }
 
 p <- plot_simply(gtfPath)
 
-png("C:/Users/skl215/Dropbox/Scripts/isoVisDev/expression/static/plots/transcript_plot.png")
+png("C:/Users/skl215/Dropbox/Scripts/isoVisDev/expression/static/plots/transcript_plot.png", width = 480, height = 480)
 print(p)
 dev.off()
