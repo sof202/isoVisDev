@@ -1,15 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Selection Success</title>
-</head>
-<body>
-    <h1>You've picked these transcripts for gene: {{ gene_name }}</h1>
-    <ul>
-        {% for transcript in selected_transcripts %}
-            <li>{{ transcript }}</li>
-        {% endfor %}
-    </ul>
-</body>
-</html>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div style="min-height: calc(100vh - 100px);">
+        <h1> {{ gene_name }} </h1>
+        <br>
+        <div>
+            {% for transcript in selected_transcripts %}
+                <span> <h4> {{ transcript }} </h4> </span>{% if not forloop.last %}, {% endif %}
+            {% empty %}
+                <span>No transcripts selected.</span>
+            {% endfor %}
+        </div>
+
+        <div class="container-fluid d-flex justify-content-left">
+           {% if plot %}
+            <div>
+                <img src="{% static 'plots/transcript_plot.png' %}" alt="Transcript Plot">
+            </div>
+           {% endif %}
+        </div>
+
+    </div>
+{% endblock %}

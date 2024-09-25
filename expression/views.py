@@ -145,11 +145,11 @@ def user_form(request):
               template,
               context)
 
-def run_r_ggtranscript():
-    scriptR = os.path.join('C:/Users/sl693/Dropbox/Scripts/isoVisDev/expression/management/commands/plot_transcript_structure.R')
+def run_r_ggtranscript(gtfPath):
+    scriptR = os.path.join('C:/Users/skl215/Dropbox/Scripts/isoVisDev/expression/management/commands/plot_transcript_structure.R')
     try:
         result = subprocess.run(
-            ['Rscript', scriptR], 
+            ['Rscript', scriptR, gtfPath], 
             capture_output=True, text=True, check=True
         )
         print("R Script Output:", result.stdout)
@@ -268,10 +268,18 @@ def transcript_identify(request):
 
             if transcript_form.is_valid():
                 selected_transcripts = transcript_form.cleaned_data['Transcripts']
+                print(selected_transcripts[0])
+                selected_transcript_df = TranscriptFeature.objects.filter(isoform=selected_transcripts[0])
+                df = pd.DataFrame(selected_transcript_df.values())
+                gtfPath = 'C:/Users/skl215/Dropbox/Scripts/isoVisDev/expression/df.csv'
+                df.to_csv(gtfPath)
+                plot = run_r_ggtranscript(gtfPath)  # Modify this function to accept isoform ID
+
                 print("Selected transcripts:", selected_transcripts)
                 # Render the success message with selected transcripts
                 return render(request, 'expression/transcript_selected_success.html', {
                     'selected_transcripts': selected_transcripts,
+                    'plot' : plot,
                     'gene_name': gene_name
                 })
             else:

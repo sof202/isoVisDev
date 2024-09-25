@@ -53,7 +53,7 @@ class Transcriptcounts(models.Model):
 
 # Transcript gtf
 class TranscriptFeature(models.Model):
-    seqname = models.CharField(max_length=100)
+    seqnames = models.CharField(max_length=100)
     geneName = models.CharField(max_length=100)
     isoform = models.CharField(max_length=50)
     start = models.IntegerField()
