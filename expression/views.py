@@ -229,52 +229,59 @@ def transcript_identify(request):
                 gene_name = gene_form.cleaned_data['gene_name']
                 transcripts = TranscriptFeature.objects.filter(geneName=gene_name)
                 unique_transcripts = {transcript.isoform: transcript for transcript in transcripts}.values()
-                print(transcripts)
 
                 if transcripts.exists():
                     # Create choices for the dropdown based on the fetched transcripts
                     transcript_choices = [(t.isoform, t.isoform) for t in unique_transcripts]
+                    print("Available transcript choices:", transcript_choices)
 
                     # Initialize the multiple selection form with transcript choices
-                    transcript_form = TheForm(initial={'choices': transcript_choices})
-
+                    transcript_form = TheForm()  # No POST data here
+                    transcript_form.fields['Transcripts'].choices = transcript_choices
+                    
+                    # Store gene_name in session for later use
+                    request.session['gene_name'] = gene_name
+                    
                     # Render the form with transcript options
                     return render(request, 'expression/select_transcript.html', {
                         'form': transcript_form,
                         'gene_name': gene_name
                     })
+
                 else:
                     # If no transcripts found for the gene
                     return render(request, 'expression/gene_form.html', {
                         'form': gene_form,
                         'error_message': f"No transcripts found for gene {gene_name}"
                     })
-        
+
         # Check if the user submitted the transcript selection form
-        transcript_form = TheForm(request.POST)
+        else:
+            transcript_form = TheForm(request.POST)
+            gene_name = request.session.get('gene_name')
 
-        if transcript_form.is_valid():
-            selected_transcripts = transcript_form.cleaned_data['userselection']
-            
-            # Check if there are selected transcripts before plotting
-            if selected_transcripts:
-                # Generate plot based on selected transcripts
-                plot = run_r_ggtranscript(selected_transcripts)
+            # Re-fetch transcripts based on the stored gene_name
+            transcripts = TranscriptFeature.objects.filter(geneName=gene_name)
+            unique_transcripts = {transcript.isoform: transcript for transcript in transcripts}.values()
+            transcript_choices = [(t.isoform, t.isoform) for t in unique_transcripts]
+            transcript_form.fields['Transcripts'].choices = transcript_choices
 
-                return render(request, 'expression/transcriptlevel.html', {
-                    'transcripts': selected_transcripts,
-                    'plot': plot
+            if transcript_form.is_valid():
+                selected_transcripts = transcript_form.cleaned_data['Transcripts']
+                print("Selected transcripts:", selected_transcripts)
+                # Render the success message with selected transcripts
+                return render(request, 'expression/transcript_selected_success.html', {
+                    'selected_transcripts': selected_transcripts,
+                    'gene_name': gene_name
                 })
             else:
+                print("Form is not valid:", transcript_form.errors)
                 return render(request, 'expression/select_transcript.html', {
                     'form': transcript_form,
-                    'error_message': 'No transcripts selected. Please select at least one transcript.'
+                    'gene_name': gene_name,
+                    'error_message': 'Please select at least one transcript.'
                 })
-        else:
-            return render(request, 'expression/select_transcript.html', {
-                'form': transcript_form,
-                'error_message': 'Invalid transcript selection'
-            })
+
 
 def transcript_identify_old(request):
     plot = ""

@@ -2,7 +2,6 @@
 
 {% block content %}
 <div style="min-height: calc(100vh - 100px);">
-    <h2>Enter Gene Name</h2>
     <form method="POST">
         {% csrf_token %}
         {{ form.as_p }}  <!-- Render the gene input field -->

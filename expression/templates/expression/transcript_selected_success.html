@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Selection Success</title>
+</head>
+<body>
+    <h1>You've picked these transcripts for gene: {{ gene_name }}</h1>
+    <ul>
+        {% for transcript in selected_transcripts %}
+            <li>{{ transcript }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

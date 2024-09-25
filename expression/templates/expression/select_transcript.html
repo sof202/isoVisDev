@@ -2,11 +2,21 @@
 
 {% block content %}
 <div style="min-height: calc(100vh - 100px);">
-    <h2>Select Transcripts for Gene: {{ gene_name }}</h2>
-    <form method="POST">
+    <h2>{{ gene_name }}</h2>
+    <br>
+    <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}  <!-- This will render the multiple selection dropdown -->
-        <button type="submit" class="btn btn-primary mt-2">Submit Selection</button>
+        
+        <div class="form-group">
+            <label for="{{ form.Transcripts.id_for_label }}">Select Transcripts:</label>
+            <div style="margin-top: 10px;">  <!-- Space between label and dropdown -->
+                {{ form.Transcripts }}
+            </div>
+        </div>
+        
+        <div style="margin-top: 20px;">  <!-- Space above the submit button -->
+            <button type="submit">Submit</button>
+        </div>
     </form>
 
     {% if error_message %}
