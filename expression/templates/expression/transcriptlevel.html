@@ -15,18 +15,20 @@
             {% csrf_token %}
             <select id="transcripts" name="transcript_id" required>
                 {% for transcript in transcripts %}
-                    <option value="{{ transcript.isoform }}">{{ transcript }}</option>
+                    <option value="{{ transcript.isoform }}">{{ transcript.isoform }}</option>
                 {% endfor %}
             </select>
             <!-- <button type="submit" class="btn btn-primary mt-2">Show Transcript</button>-->
         </form>
         
-        <!-- Display the plot if available -->
-        {% if plot %}
-            <div>
-                <img src="{% static 'plots/transcript_plot.png' %}" alt="Transcript Plot">
-            </div>
-        {% endif %}
+        <!-- Container to display the plot dynamically -->
+        <div id="plot-container">
+            {% if plot %}
+                <div>
+                    <img id="transcript-plot" src="{% static 'plots/transcript_plot.png' %}" alt="Transcript Plot">
+                </div>
+            {% endif %}
+        </div>
     {% endif %}
 </div>
 
@@ -35,4 +37,36 @@
     <a href="{% url 'expression:user_form' %}">Find another gene</a>
 </footer>
 
-{% endblock %}
+{% endblock %}  <!-- Only one block for content is allowed in this template -->
+
+<!-- Add JavaScript to handle transcript change event and update plot via AJAX -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function(){
+        $('#transcripts').change(function(){
+            const transcriptId = $(this).val();  // Get the selected transcript ID
+            const csrfToken = $('input[name="csrfmiddlewaretoken"]').val();  // CSRF token for POST request
+            
+            // Send AJAX request to the server to fetch the updated plot
+            $.ajax({
+                url: "",  // Current URL (the same view will handle this)
+                type: "POST",
+                data: {
+                    transcript_id: transcriptId,
+                    csrfmiddlewaretoken: csrfToken
+                },
+                success: function(response) {
+                    // Update the plot image with the new one
+                    if (response.plot) {
+                        $('#plot-container').html('<img id="transcript-plot" src="' + response.plot + '" alt="Transcript Plot">');
+                    } else {
+                        $('#plot-container').html('<p>No plot available for the selected transcript.</p>');
+                    }
+                },
+                error: function(error) {
+                    console.log("Error:", error);
+                }
+            });
+        });
+    });
+</script>

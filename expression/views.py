@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse
 from django.urls import reverse
 from expression import models
 from .models import Film, Genesummary, Genecounts, Transcriptcounts, TranscriptFeature
+from .forms import GeneForm, TheForm # Import the form
 import plotly.express as px
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -9,6 +11,7 @@ import matplotlib.patches as patches
 import seaborn as sns
 import subprocess
 import os
+import time
 
 
 def home(request):
@@ -213,6 +216,67 @@ def plot_simply(gtf):
     return html_fig
 
 def transcript_identify(request):
+    if request.method == 'GET':
+        # Display the gene input form
+        form = GeneForm()
+        return render(request, 'expression/gene_form.html', {'form': form})
+
+    elif request.method == 'POST':
+        # Check if the user submitted the gene form
+        if 'gene_name' in request.POST:
+            gene_form = GeneForm(request.POST)
+            if gene_form.is_valid():
+                gene_name = gene_form.cleaned_data['gene_name']
+                transcripts = TranscriptFeature.objects.filter(geneName=gene_name)
+                unique_transcripts = {transcript.isoform: transcript for transcript in transcripts}.values()
+                print(transcripts)
+
+                if transcripts.exists():
+                    # Create choices for the dropdown based on the fetched transcripts
+                    transcript_choices = [(t.isoform, t.isoform) for t in unique_transcripts]
+
+                    # Initialize the multiple selection form with transcript choices
+                    transcript_form = TheForm(initial={'choices': transcript_choices})
+
+                    # Render the form with transcript options
+                    return render(request, 'expression/select_transcript.html', {
+                        'form': transcript_form,
+                        'gene_name': gene_name
+                    })
+                else:
+                    # If no transcripts found for the gene
+                    return render(request, 'expression/gene_form.html', {
+                        'form': gene_form,
+                        'error_message': f"No transcripts found for gene {gene_name}"
+                    })
+        
+        # Check if the user submitted the transcript selection form
+        transcript_form = TheForm(request.POST)
+
+        if transcript_form.is_valid():
+            selected_transcripts = transcript_form.cleaned_data['userselection']
+            
+            # Check if there are selected transcripts before plotting
+            if selected_transcripts:
+                # Generate plot based on selected transcripts
+                plot = run_r_ggtranscript(selected_transcripts)
+
+                return render(request, 'expression/transcriptlevel.html', {
+                    'transcripts': selected_transcripts,
+                    'plot': plot
+                })
+            else:
+                return render(request, 'expression/select_transcript.html', {
+                    'form': transcript_form,
+                    'error_message': 'No transcripts selected. Please select at least one transcript.'
+                })
+        else:
+            return render(request, 'expression/select_transcript.html', {
+                'form': transcript_form,
+                'error_message': 'Invalid transcript selection'
+            })
+
+def transcript_identify_old(request):
     plot = ""
     if request.method == 'GET':
         context = {'title': 'User Form Page'}
@@ -224,18 +288,28 @@ def transcript_identify(request):
         
     elif request.method == 'POST':
         username = request.POST.get('username')
+        transcript_id = request.POST.get('transcript_id')  # Fetch the selected transcript id
+        print("POST data:", request.POST)  # Debugging: Print all POST data
         request.session['username'] = username
 
         transcripts = TranscriptFeature.objects.filter(geneName=username)
-        print(transcripts)
         unique_transcripts = {transcript.isoform: transcript for transcript in transcripts}.values()
         
-        data = list(transcripts.values())
-        df = pd.DataFrame(data)
-        print(df)
-        gtfPath = 'C:/Users/sl693/Dropbox/Scripts/isoVisDev/expression/df.csv'
-        df.to_csv(gtfPath)
-        plot = run_r_ggtranscript()
+         # If specific transcript is selected, filter the data for that isoform
+        if transcript_id:
+            print("Transcript ID received:", transcript_id)
+            selected_transcript = TranscriptFeature.objects.get(isoform=transcript_id)
+            print("Query complete:", time.time() - start_time, "seconds")
+            selected_transcript_df = TranscriptFeature.objects.filter(isoform=transcript_id)
+            print("Query 2 complete:", time.time() - start_time, "seconds")
+            df = pd.DataFrame(selected_transcript_df.values())
+            print(df)
+            gtfPath = 'C:/Users/sl693/Dropbox/Scripts/isoVisDev/expression/df.csv'
+            df.to_csv(gtfPath)
+            # Process the specific transcript data for the plot
+            plot = run_r_ggtranscript()  # Modify this function to accept isoform ID
+            # Respond with JSON data to dynamically update the plot
+            return JsonResponse({'plot': plot})
 
         if transcripts.exists():
             context = {

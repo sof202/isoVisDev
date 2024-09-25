@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="min-height: calc(100vh - 100px);">
+    <h2>Select Transcripts for Gene: {{ gene_name }}</h2>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}  <!-- This will render the multiple selection dropdown -->
+        <button type="submit" class="btn btn-primary mt-2">Submit Selection</button>
+    </form>
+
+    {% if error_message %}
+        <p class="alert alert-danger">{{ error_message }}</p>
+    {% endif %}
+</div>
+{% endblock %}

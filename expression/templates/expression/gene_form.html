@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="min-height: calc(100vh - 100px);">
+    <h2>Enter Gene Name</h2>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}  <!-- Render the gene input field -->
+        <button type="submit" class="btn btn-primary mt-2">Search Transcripts</button>
+    </form>
+
+    {% if error_message %}
+        <p class="alert alert-danger">{{ error_message }}</p>
+    {% endif %}
+</div>
+{% endblock %}
