@@ -5,10 +5,9 @@ import plotly.express as px
 import os
 import subprocess
 import logging
-logger = logging.getLogger(__name__)
 from django.shortcuts import render
 
-
+logger = logging.getLogger('isoVisDev')
 
 def gene_boxplot(df):
     fig = px.box(
@@ -26,18 +25,29 @@ def gene_boxplot(df):
 def run_r_ggtranscript(gtfPath):
     dir_path = os.path.dirname(os.path.realpath(__file__))
     expression_path = os.path.join(dir_path, '..')
-    print(dir_path)
+    print(f"Current Directory: {dir_path}")
+    
     scriptR = os.path.join(dir_path, 'plot_transcript_structure.R')
+    print(f"R Script Path: {scriptR}")
+    
     try:
         result = subprocess.run(
-            ['Rscript', scriptR, gtfPath, expression_path], 
+            ['Rscript', scriptR, gtfPath, expression_path],
             capture_output=True, text=True, check=True
         )
+        
+        # Log the standard output from the R script
+        logger.info("R Script Output:\n%s", result.stdout)
         print("R Script Output:", result.stdout)
-        print("R Script Error Output:", result.stderr)
+
+        # Log the standard error from the R script
+        if result.stderr:  # Check if there's any error output
+            logger.error("R Script Error Output:\n%s", result.stderr)
+            print("R Script Error Output:", result.stderr)
+            
         return result.stdout  # Return plot or relevant output
     except subprocess.CalledProcessError as e:
-        logger.error(f'Error running R script: {e.stderr}')
-        print(f"Error: {e.stderr}")  # Print R script errors
-        return None  # Return None if there's an error 
+        logger.error(f'Error running R script: {e.stderr}')  # Log the error
+        print(f"Error: {e.stderr}")
+        return None  # Return None if there's an error
   
