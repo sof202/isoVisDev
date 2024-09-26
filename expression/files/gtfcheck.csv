@@ -1,4 +1,4 @@
-seqname,geneName,isoform,start,end,feature,strand
+seqnames,geneName,isoform,start,end,feature,strand
 chr10,ADD3,ONT10_4920_231,110007975,110134330,transcript,-
 chr10,ADD3,ONT10_4920_231,110007975,110008299,exon,-
 chr10,ADD3,ONT10_4920_231,110100625,110100848,exon,-

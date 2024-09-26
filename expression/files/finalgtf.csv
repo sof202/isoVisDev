@@ -1,4 +1,4 @@
-seqname,feature,start,end,strand,gene_id,transcript_id
+seqnames,feature,start,end,strand,gene_id,transcript_id
 chr10,transcript,110007975,110134330,+,ADD3,ONT10_4920_231
 chr10,exon,110007975,110008299,+,ADD3,ONT10_4920_231
 chr10,exon,110100625,110100848,+,ADD3,ONT10_4920_231

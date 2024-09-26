@@ -28,12 +28,12 @@ class Command(BaseCommand):
     
         # Show this if the data already exist in the database
         if Genecounts.objects.exists():
-            print('gene summary data already loaded...exiting.')
+            print('gene counts data already loaded...exiting.')
             print(ALREDY_LOADED_ERROR_MESSAGE)
             return
             
         # Show this before loading the data into the database
-        print("Loading gene summary data")
+        print("Loading gene counts data")
 
 
         #Code to load the data into database

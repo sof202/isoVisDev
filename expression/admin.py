@@ -1,10 +1,7 @@
 from django.contrib import admin
-from .models import Film, Genre, Genesummary, Genecounts, Transcriptcounts, TranscriptFeature
+from .models import Genesummary, Genecounts, Transcriptcounts, TranscriptFeature
 #from import_export.admin import ImportExportModelAdmin
 #from .resource import ReportResource  
-
-admin.site.register(Film)
-admin.site.register(Genre)
 
 #class ReportAdmin(ImportExportModelAdmin):
 #     resource_class = ReportResource      
@@ -25,4 +22,4 @@ class TranscriptcountsAdmin(admin.ModelAdmin):
 
 @admin.register(TranscriptFeature)
 class TranscriptGtfFeatureAdmin(admin.ModelAdmin):
-   list_display=['seqname', 'geneName', 'isoform', 'start', 'end', 'feature', 'strand']
+   list_display=['seqnames', 'geneName', 'isoform', 'start', 'end', 'feature', 'strand']

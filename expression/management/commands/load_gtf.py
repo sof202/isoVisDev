@@ -28,6 +28,6 @@ class Command(BaseCommand):
         print("Loading gtf")
 
         #Code to load the data into database
-        for row in DictReader(open('./expression/files/gtfcheck.csv')):
-            TranscriptGtfFeatures=TranscriptFeature(seqname=row['seqname'], geneName=row['geneName'], isoform=row['isoform'], start=row['start'], end=row['end'], feature = row['feature'], strand = row['strand'])  
+        for row in DictReader(open('./expression/files/finalgtf.csv')):
+            TranscriptGtfFeatures=TranscriptFeature(seqnames=row['seqnames'], geneName=row['gene_id'], isoform=row['transcript_id'], start=row['start'], end=row['end'], feature = row['feature'], strand = row['strand'])  
             TranscriptGtfFeatures.save()

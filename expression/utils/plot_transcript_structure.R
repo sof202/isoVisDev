@@ -3,25 +3,27 @@ suppressMessages(library("dplyr"))
 suppressMessages(library("ggtranscript"))
 suppressMessages(library("base64enc"))
 
-# first argument = gtf
 args <- commandArgs(trailingOnly = TRUE)
 gtfPath <- args[1]
-#gtfPath <- 'C:/Users/sl693/Dropbox/Scripts/isoVisDev/expression/df.csv'
-message("Loading gtf for plotting")
-print(gtfPath)
+outputPath <- args[2]
+
+#message("Loading gtf for plotting")
 
 plot_simply <- function(gtfPath){
 
   gtf <- read.table(gtfPath, sep = ",", header = T)
   gexons <- gtf %>% dplyr::filter(feature == "exon")
 
-  #gexons_rescaled <- shorten_gaps(
-  #gexons, 
-  #to_intron(gexons, "isoform"), 
-  #group_var = "isoform"
-  #)
+  print(gexons)
 
-  p <- gexons %>%
+  gexons_rescaled <- shorten_gaps(
+  gexons, 
+  to_intron(gexons, "isoform"), 
+  group_var = "isoform"
+  )
+
+  p <- gexons_rescaled %>%
+    dplyr::filter(type == "exon") %>%
     ggplot(aes(
         xstart = start,
         xend = end,
@@ -29,16 +31,15 @@ plot_simply <- function(gtfPath){
     )) +
     geom_range() +
     geom_intron(
-        data = to_intron(gexons, "isoform"),
-        aes(strand = strand)
+        data = gexons_rescaled %>% dplyr::filter(type == "intron"), 
+        arrow.min.intron.length = 200
     ) +
     theme_classic() +
     labs(y = NULL) +
     theme(
     axis.line = element_blank(),
-    axis.text.x = element_blank(),
     axis.text.y = element_blank(),
-    axis.ticks = element_blank(),
+    axis.ticks.y = element_blank(),
     axis.title.x = element_blank(),
     axis.title.y = element_blank(),
     legend.position = "none",
@@ -47,14 +48,15 @@ plot_simply <- function(gtfPath){
     panel.grid.major = element_blank(),
     panel.grid.minor = element_blank(),
     plot.background = element_blank(),
-    plot.margin = margin(0, 0, 0, 0)  # Reducing margins to eliminate extra space
     )
+
+
 
   return(p)
 }
 
 p <- plot_simply(gtfPath)
 
-png("C:/Users/skl215/Dropbox/Scripts/isoVisDev/expression/static/plots/transcript_plot.png", width = 480, height = 480)
+png(paste0(outputPath, "/static/plots/transcript_plot.png"))
 print(p)
 dev.off()

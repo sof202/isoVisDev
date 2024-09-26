@@ -2,29 +2,13 @@ from django.db import models
 
 # to make new model: python manage.py makemigrations, python manage.py migrate
 
-class Genre(models.Model):
-    name = models.CharField(max_length=150)
-    
-    def __str__(self):
-        return self.name
-
-
-class Film(models.Model):
-    title = models.CharField(max_length=200)
-    year = models.PositiveIntegerField()
-    genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
-    
-    def __str__(self):
-        return self.title
-
-
 class Genesummary(models.Model):
     geneName = models.CharField(max_length=50)
     totalNum = models.PositiveIntegerField()
     novelNum = models.PositiveIntegerField()
     
     def __str__(self):
-        return self.title
+        return self.geneName
 
 
 class Genecounts(models.Model):
@@ -36,7 +20,8 @@ class Genecounts(models.Model):
     sex = models.CharField(max_length=2)
     
     def __str__(self):
-        return self.title
+        return self.geneName
+
 
 class Transcriptcounts(models.Model):
     # sampleID created prior from 1...
@@ -63,4 +48,3 @@ class TranscriptFeature(models.Model):
 
     def __str__(self):
         return self.isoform
-
