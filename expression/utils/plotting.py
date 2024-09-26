@@ -4,6 +4,11 @@ import seaborn as sns
 import plotly.express as px
 import os
 import subprocess
+import logging
+logger = logging.getLogger(__name__)
+from django.shortcuts import render
+
+
 
 def gene_boxplot(df):
     fig = px.box(
@@ -32,6 +37,7 @@ def run_r_ggtranscript(gtfPath):
         print("R Script Error Output:", result.stderr)
         return result.stdout  # Return plot or relevant output
     except subprocess.CalledProcessError as e:
+        logger.error(f'Error running R script: {e.stderr}')
         print(f"Error: {e.stderr}")  # Print R script errors
         return None  # Return None if there's an error 
   

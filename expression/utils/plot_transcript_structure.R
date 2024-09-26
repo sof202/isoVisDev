@@ -1,7 +1,26 @@
+# List of required packages
+required_packages <- c("ggplot2", "dplyr", "devtools")  
+# List of development packages
+dev_packages <- c("dzhang32/ggtranscript")
+
+# Install required packages
+for (package in required_packages) {
+    if (!require(package, character.only = TRUE)) {
+        install.packages(package, dependencies = TRUE)
+    }
+}
+
+# Install development packages
+for (package in dev_packages) {
+    if (!require(package, character.only = TRUE)) {
+        devtools::install_github(package)
+    }
+}
+
+# packages
 suppressMessages(library("ggplot2"))
 suppressMessages(library("dplyr"))
 suppressMessages(library("ggtranscript"))
-suppressMessages(library("base64enc"))
 
 args <- commandArgs(trailingOnly = TRUE)
 gtfPath <- args[1]
